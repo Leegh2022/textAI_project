@@ -1,49 +1,42 @@
-# ------------------------
-# 📁 Python (Backend)
-# ------------------------
+# Python
 __pycache__/
 *.py[cod]
+*$py.class
 *.so
-.env
-.venv/
+.Python
 venv/
-.env.local
-instance/
-.pytest_cache/
-db.sqlite3
+env/
+ENV/
+.venv
 
-# ------------------------
-# 📁 Node / React (Frontend)
-# ------------------------
-frontend/node_modules/
-frontend/build/
-frontend/.pnp
-frontend/.pnp.js
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Node
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.DS_Store
 
-# ------------------------
-# 📁 Environment / OS / Editor
-# ------------------------
-# macOS
-*.DS_Store
-.AppleDouble
-.LSOverride
+# Build outputs
+frontend/build/
+dist/
+*.egg-info/
 
-# Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-
-# VSCode / JetBrains IDE
+# IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
 
 # Logs
 *.log
-
-# Others
-*.bak
-*.swp
