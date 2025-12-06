@@ -269,7 +269,7 @@ wcwidth==0.2.13
 webcolors==24.11.1
 webencodings==0.5.1
 websocket-client==1.8.0
-websockets==15.0.1
+# websockets==15.0.1  # supabase의 realtime 패키지가 websockets<13을 요구하므로 버전 제약 제거
 widgetsnbextension==4.0.14
 wikipedia==1.4.0
 wrapt==1.17.3
