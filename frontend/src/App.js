@@ -313,8 +313,16 @@ function App() {
 
       const eventSource = new EventSource(`${API_BASE_URL}/stream-events`);
 
+      eventSource.onopen = () => {
+        console.log("✅ SSE 연결 성공");
+      };
+
       eventSource.onmessage = (event) => {
         const data = event.data;
+        // keepalive 메시지 무시
+        if (data.trim() === "" || data === ": keepalive") {
+          return;
+        }
         if (data === "[DONE]") {
           setIsStreaming(false);
           closeEventSource();
@@ -332,10 +340,13 @@ function App() {
 
       eventSource.onerror = (err) => {
         console.error("SSE error:", err);
-        setStreamText((prev) => prev + "\n\n[스트리밍 연결이 끊어졌습니다]");
-        setIsStreaming(false);
-        showToast("❌ 스트리밍 연결 오류가 발생했습니다.");
-        closeEventSource();
+        // 연결이 완전히 끊어진 경우에만 에러 처리
+        if (eventSource.readyState === EventSource.CLOSED) {
+          setStreamText((prev) => prev + "\n\n[스트리밍 연결이 끊어졌습니다]");
+          setIsStreaming(false);
+          showToast("❌ 스트리밍 연결 오류가 발생했습니다.");
+          closeEventSource();
+        }
       };
 
       window.currentEventSource = eventSource;
@@ -474,8 +485,16 @@ function App() {
 
       const eventSource = new EventSource(`${API_BASE_URL}/suggest-stream`);
 
+      eventSource.onopen = () => {
+        console.log("✅ SSE 연결 성공 (실시간 제안)");
+      };
+
       eventSource.onmessage = (event) => {
         const data = event.data;
+        // keepalive 메시지 무시
+        if (data.trim() === "" || data === ": keepalive") {
+          return;
+        }
         if (data === "[DONE]") {
           setIsSuggestStreaming(false);
           closeEventSource();
@@ -493,10 +512,13 @@ function App() {
 
       eventSource.onerror = (err) => {
         console.error("Suggest Stream SSE error:", err);
-        setStreamSuggestion((prev) => prev + "\n\n[스트리밍 연결이 끊어졌습니다]");
-        setIsSuggestStreaming(false);
-        showToast("❌ 실시간 제안 스트리밍 오류가 발생했습니다.");
-        closeEventSource();
+        // 연결이 완전히 끊어진 경우에만 에러 처리
+        if (eventSource.readyState === EventSource.CLOSED) {
+          setStreamSuggestion((prev) => prev + "\n\n[스트리밍 연결이 끊어졌습니다]");
+          setIsSuggestStreaming(false);
+          showToast("❌ 실시간 제안 스트리밍 오류가 발생했습니다.");
+          closeEventSource();
+        }
       };
 
       window.currentEventSource = eventSource;

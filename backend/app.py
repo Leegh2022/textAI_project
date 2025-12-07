@@ -63,6 +63,7 @@ def stream_post():
 @app.route("/stream-events", methods=["GET"])
 def stream_events():
     """문장 입력 중 실시간 예측 스트리밍"""
+    import time
     def generate():
         try:
             if not latest_input["message"] or not latest_input["message"].strip():
@@ -70,12 +71,21 @@ def stream_events():
                 yield "data: [DONE]\n\n"
                 return
 
+            last_keepalive = time.time()
+            token_count = 0
             for token in stream_predict_text(latest_input["message"], latest_input["tone"]):
                 if token.startswith("[ERROR]"):
                     yield f"data: {token}\n\n"
                     break
                 yield f"data: {token}\n\n"
                 sys.stdout.flush()
+                token_count += 1
+                # Render 프록시 타임아웃 방지를 위해 30초마다 keepalive 전송
+                current_time = time.time()
+                if current_time - last_keepalive > 30:
+                    yield ": keepalive\n\n"
+                    sys.stdout.flush()
+                    last_keepalive = current_time
             yield "data: [DONE]\n\n"
             sys.stdout.flush()
         except Exception as e:
@@ -134,6 +144,7 @@ def suggest():
 @app.route("/suggest-stream", methods=["GET"])
 def suggest_stream():
     """문장 제안 (SSE) - 문장 번호 및 가독성 강화"""
+    import time
     def generate():
         try:
             if not latest_input["message"] or not latest_input["message"].strip():
@@ -141,12 +152,21 @@ def suggest_stream():
                 yield "data: [DONE]\n\n"
                 return
 
+            last_keepalive = time.time()
+            token_count = 0
             for token in stream_generate_suggestions(latest_input["message"], latest_input["tone"]):
                 if token.startswith("[ERROR]"):
                     yield f"data: {token}\n\n"
                     break
                 yield f"data: {token}\n\n"
                 sys.stdout.flush()
+                token_count += 1
+                # Render 프록시 타임아웃 방지를 위해 30초마다 keepalive 전송
+                current_time = time.time()
+                if current_time - last_keepalive > 30:
+                    yield ": keepalive\n\n"
+                    sys.stdout.flush()
+                    last_keepalive = current_time
             yield "data: [DONE]\n\n"
             sys.stdout.flush()
         except Exception as e:
